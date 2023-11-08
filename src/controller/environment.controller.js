@@ -6,52 +6,54 @@ const {
   updateEnviroment,
   deleteEnviroment,
 } = require("../service/environment.service");
+const { isValidEnviromentId, isValidBody } = require("../helper/validation");
+const buildResponse = require("../helper/builResponse");
 
 const route = express.Router();
 
 route.get("/", async (req, res) => {
   const data = await getAllEnviroment();
-  res.send(data);
+  buildResponse(res, 200, data);
 });
 
-route.get("/:id", async (req, res) => {
+route.get("/:id", isValidEnviromentId, async (req, res) => {
   try {
     const { id } = req.params;
     const data = await getEnviromentById(id);
-    res.send(data);
+    buildResponse(res, 200, data);
   } catch (error) {
-    res.status(404).send(error.message)
+    buildResponse(res, 404, error.message);
   }
 });
 
-route.post("/", async (req, res) => {
+route.post("/", isValidBody, async (req, res) => {
   try {
     const { label, category, priority } = req.body;
     const data = await createEnviroment(label, category, priority);
-    res.status(200).send(data);
+    buildResponse(res, 200, data);
   } catch (error) {
-    res.status(404).send(error.message);
+    buildResponse(res, 404, error.message);
   }
 });
 
-route.put("/:id", async (req, res) => {
+route.put("/:id", isValidEnviromentId, isValidBody, async (req, res) => {
   try {
     const { id } = req.params;
     const { label, category, priority } = req.body;
     const data = await updateEnviroment(id, label, category, priority);
-    res.status(200).send(data);
+    buildResponse(res, 200, data);
   } catch (error) {
-    res.status(404).send(error.message);
+    buildResponse(res, 404, error.message);
   }
 });
 
-route.delete("/:id", async (req, res) => {
+route.delete("/:id", isValidEnviromentId, async (req, res) => {
   try {
     const { id } = req.params;
-    const data =await deleteEnviroment(id);
-    res.status(200).send(data);
+    const data = await deleteEnviroment(id);
+    buildResponse(res, 200, data);
   } catch (error) {
-    res.status(404).send(error.message);
+    buildResponse(res, 404, error.message);
   }
 });
 
