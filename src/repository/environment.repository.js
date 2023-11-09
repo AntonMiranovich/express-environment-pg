@@ -39,9 +39,9 @@ async function patchEnviromentBD(id, clientObj) {
   const client = await pool.connect();
   const sqlSearchById = 'select * from environment where id=$1';
   const oldObj = (await client.query(sqlSearchById, [id])).rows;
-  const newObj = { ...oldObj, ...clientObj };
+  const newObj = { ...oldObj[0], ...clientObj };
   const sqlPatch = 'update environment set label = $2,category = $3, priority=$4 where id=$1 returning *';
-  const result = await client.query(sqlPatch, [id, newObj.label, newObj.category, newObj.priority]);
+  const result = (await client.query(sqlPatch, [id, newObj.label, newObj.category, newObj.priority])).rows;
   return result;
 }
 

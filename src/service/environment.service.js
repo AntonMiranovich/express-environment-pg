@@ -38,7 +38,6 @@ async function deleteEnviroment(id) {
 
 async function patchEnviroment(id, clientObj){
   const data=await patchEnviromentBD(id, clientObj)
-  if (!data.length) throw new Error("this id is not found");
   return data;
 }
 
