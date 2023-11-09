@@ -4,6 +4,7 @@ const {
   createEnviromentBD,
   updateEnviromentDB,
   deleteEnviromentDB,
+  patchEnviromentBD,
 } = require("../repository/environment.repository");
 
 async function getAllEnviroment() {
@@ -35,10 +36,17 @@ async function deleteEnviroment(id) {
   return data;
 }
 
+async function patchEnviroment(id, clientObj){
+  const data=await patchEnviromentBD(id, clientObj)
+  if (!data.length) throw new Error("this id is not found");
+  return data;
+}
+
 module.exports = {
   getAllEnviroment,
   getEnviromentById,
   createEnviroment,
   updateEnviroment,
   deleteEnviroment,
+  patchEnviroment,
 };

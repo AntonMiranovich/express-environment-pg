@@ -1,22 +1,23 @@
-const express = require("express");
+const express = require('express');
 const {
   getAllEnviroment,
   getEnviromentById,
   createEnviroment,
   updateEnviroment,
   deleteEnviroment,
-} = require("../service/environment.service");
-const { isValidEnviromentId, isValidBody } = require("../helper/validation");
-const buildResponse = require("../helper/builResponse");
+  patchEnviroment,
+} = require('../service/environment.service');
+const { isValidEnviromentId, isValidBody } = require('../helper/validation');
+const buildResponse = require('../helper/builResponse');
 
 const route = express.Router();
 
-route.get("/", async (req, res) => {
+route.get('/', async (req, res) => {
   const data = await getAllEnviroment();
   buildResponse(res, 200, data);
 });
 
-route.get("/:id", isValidEnviromentId, async (req, res) => {
+route.get('/:id', isValidEnviromentId, async (req, res) => {
   try {
     const { id } = req.params;
     const data = await getEnviromentById(id);
@@ -26,7 +27,7 @@ route.get("/:id", isValidEnviromentId, async (req, res) => {
   }
 });
 
-route.post("/", isValidBody, async (req, res) => {
+route.post('/', isValidBody, async (req, res) => {
   try {
     const { label, category, priority } = req.body;
     const data = await createEnviroment(label, category, priority);
@@ -36,7 +37,7 @@ route.post("/", isValidBody, async (req, res) => {
   }
 });
 
-route.put("/:id", isValidEnviromentId, isValidBody, async (req, res) => {
+route.put('/:id', isValidEnviromentId, isValidBody, async (req, res) => {
   try {
     const { id } = req.params;
     const { label, category, priority } = req.body;
@@ -47,10 +48,21 @@ route.put("/:id", isValidEnviromentId, isValidBody, async (req, res) => {
   }
 });
 
-route.delete("/:id", isValidEnviromentId, async (req, res) => {
+route.delete('/:id', isValidEnviromentId, async (req, res) => {
   try {
     const { id } = req.params;
     const data = await deleteEnviroment(id);
+    buildResponse(res, 200, data);
+  } catch (error) {
+    buildResponse(res, 404, error.message);
+  }
+});
+
+route.patch('/:id', isValidEnviromentId, isValidBody, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const clientObj = req.body;
+    const data = await patchEnviroment(id, clientObj);
     buildResponse(res, 200, data);
   } catch (error) {
     buildResponse(res, 404, error.message);
